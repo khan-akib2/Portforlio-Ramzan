@@ -2,6 +2,14 @@ import { useState, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { ExternalLink, Code, Palette } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
 
 type ProjectCategory = 'all' | 'development' | 'design';
 
@@ -12,6 +20,8 @@ interface Project {
   category: 'development' | 'design';
   tags: string[];
   image: string;
+  liveUrl?: string;
+  repoUrl?: string;
 }
 
 const projects: Project[] = [
@@ -22,6 +32,8 @@ const projects: Project[] = [
     category: 'development',
     tags: ['HTML', 'CSS', 'JavaScript'],
     image: 'Spotify.png',
+    liveUrl: 'https://example.com/spotify',
+    repoUrl: 'https://github.com/khan-akib2/spotify-clone',
     
   },
   {
@@ -241,14 +253,47 @@ export const Projects = () => {
                       
                       {/* Overlay Content */}
                       <div className="absolute inset-0 flex items-end p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-full text-sm font-medium"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                          View Project
-                        </motion.button>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <motion.button
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-full text-sm font-medium"
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                              View Project
+                            </motion.button>
+                          </DialogTrigger>
+
+                          <DialogContent>
+                            <div className="space-y-4">
+                              <img src={project.image} alt={project.title} className="w-full h-64 object-cover rounded" />
+                              <div>
+                                <DialogTitle>{project.title}</DialogTitle>
+                                <DialogDescription>{project.description}</DialogDescription>
+                              </div>
+                              <div className="flex flex-wrap gap-2">
+                                {project.tags.map((tag) => (
+                                  <span key={tag} className="px-2.5 py-1 bg-secondary rounded-md text-xs text-muted-foreground">
+                                    {tag}
+                                  </span>
+                                ))}
+                              </div>
+                              <DialogFooter>
+                                {project.liveUrl && (
+                                  <a href={project.liveUrl} target="_blank" rel="noreferrer">
+                                    <Button>Live</Button>
+                                  </a>
+                                )}
+                                {project.repoUrl && (
+                                  <a href={project.repoUrl} target="_blank" rel="noreferrer">
+                                    <Button variant="outline">Code</Button>
+                                  </a>
+                                )}
+                              </DialogFooter>
+                            </div>
+                          </DialogContent>
+                        </Dialog>
                       </div>
 
                       {/* Category Badge */}
